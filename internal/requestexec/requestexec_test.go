@@ -158,17 +158,27 @@ var _ = Describe("requestexec", func() {
 
 	Describe("helper functions", func() {
 		It("rejects a Content-Type override when a JSON body is present", func() {
-			err := validateUserHeaders(map[string]string{"Content-Type": "text/plain"}, `{"ok":true}`)
+			err := validateUserHeaders(map[string]string{"Content-Type": "text/plain"}, `{"ok":true}`, nil)
 
 			Expect(err).To(MatchError(`header "Content-Type" cannot be overridden when --body is provided`))
 		})
 
 		It("allows non-conflicting user headers", func() {
-			err := validateUserHeaders(map[string]string{"X-Request-Id": "demo"}, `{"ok":true}`)
+			err := validateUserHeaders(map[string]string{"X-Request-Id": "demo"}, `{"ok":true}`, nil)
 			Expect(err).NotTo(HaveOccurred())
 
-			err = validateUserHeaders(map[string]string{"Content-Type": "text/plain"}, "")
+			err = validateUserHeaders(map[string]string{"Content-Type": "text/plain"}, "", nil)
 			Expect(err).NotTo(HaveOccurred())
+		})
+
+		It("rejects a Content-Type override when a non-JSON body is present", func() {
+			err := validateUserHeaders(
+				map[string]string{"Content-Type": "text/plain"},
+				"",
+				strings.NewReader("body"),
+			)
+
+			Expect(err).To(MatchError(`header "Content-Type" cannot be overridden when a request body is provided`))
 		})
 
 		It("resolves tenant IDs from config only", func() {
@@ -415,6 +425,27 @@ var _ = Describe("requestexec", func() {
 			Expect(err).NotTo(HaveOccurred())
 			Expect(result.DryRunRequest.URL).To(Equal(
 				"https://paasv3.apigw.te.example/prod/bkapps/applications/bk-demo/",
+			))
+		})
+
+		It("rewrites bk-aidev for legacy templates", func() {
+			writeRequestExecContext("default", "https://bkapi.example.com/api", false)
+			restore := config.SetBKTeDomainForTesting("te.example")
+			DeferCleanup(restore)
+
+			runtime, err := ResolveRuntime("", true, false)
+			Expect(err).NotTo(HaveOccurred())
+			runtime.Config.BkAPIURLTmpl = "https://{gateway_name}.apigw.te.example"
+
+			result, err := ExecuteRequest(runtime, RequestSpec{
+				GatewayName: "bk-aidev",
+				Method:      http.MethodGet,
+				Path:        "/openapi/aidev/private/v1/spaces/",
+				AuthConfig:  &api.AuthRequirements{},
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result.DryRunRequest.URL).To(Equal(
+				"https://bkaidev.apigw.te.example/prod/openapi/aidev/private/v1/spaces/",
 			))
 		})
 

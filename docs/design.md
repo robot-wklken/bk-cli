@@ -532,6 +532,8 @@ https://bkapi.example.com/api/bk-iam/prod/api/v2/systems/
   实际网关名会从 `bk-job` 兼容映射为 `jobv3-cloud`
 - 当目标 `gateway_name` 是 `bkpaas3`，且 `bk_api_url_tmpl` 命中同样的
   兼容模板时，实际网关名会从 `bkpaas3` 兼容映射为 `paasv3`
+- 当目标 `gateway_name` 是 `bk-aidev`，且 `bk_api_url_tmpl` 命中同样的
+  兼容模板时，实际网关名会从 `bk-aidev` 兼容映射为 `bkaidev`
 
 ### 9.2 `X-Bkapi-Authorization` 构造
 

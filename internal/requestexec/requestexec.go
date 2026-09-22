@@ -22,6 +22,7 @@ package requestexec
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -62,6 +63,9 @@ type RequestSpec struct {
 	Path        string
 	ParamsJSON  string
 	BodyJSON    string
+	Body        io.Reader
+	ContentType string
+	DryRunBody  any
 	Headers     []string
 	Stage       string
 	Timeout     string
@@ -164,11 +168,11 @@ func executeRequest(runtime *Runtime, spec RequestSpec, timeoutErrorLabel string
 			"Use repeatable --header key:value entries",
 		)
 	}
-	if err := validateUserHeaders(headerMap, spec.BodyJSON); err != nil {
+	if err := validateUserHeaders(headerMap, spec.BodyJSON, spec.Body); err != nil {
 		return nil, output.UserError(
 			"request_error",
 			err.Error(),
-			"Use repeatable --header key:value entries, and let bk-cli manage JSON content type when --body is provided",
+			"Use repeatable --header key:value entries, and let bk-cli manage the request body Content-Type",
 		)
 	}
 
@@ -209,13 +213,16 @@ func executeRequest(runtime *Runtime, spec RequestSpec, timeoutErrorLabel string
 	}
 
 	reqSpec := &api.Request{
-		Method:     spec.Method,
-		URL:        fullURL,
-		ParamsJSON: spec.ParamsJSON,
-		BodyJSON:   spec.BodyJSON,
-		Headers:    headerMap,
-		AuthHeader: authHeader,
-		TenantID:   resolveTenantID(runtime.Config),
+		Method:      spec.Method,
+		URL:         fullURL,
+		ParamsJSON:  spec.ParamsJSON,
+		BodyJSON:    spec.BodyJSON,
+		Body:        spec.Body,
+		ContentType: spec.ContentType,
+		DryRunBody:  spec.DryRunBody,
+		Headers:     headerMap,
+		AuthHeader:  authHeader,
+		TenantID:    resolveTenantID(runtime.Config),
 	}
 
 	httpReq, err := reqSpec.Build()
@@ -262,10 +269,15 @@ func executeRequest(runtime *Runtime, spec RequestSpec, timeoutErrorLabel string
 	return &RequestResult{Envelope: envelope}, nil
 }
 
-func validateUserHeaders(headers map[string]string, bodyJSON string) error {
+func validateUserHeaders(headers map[string]string, bodyJSON string, body io.Reader) error {
 	for key := range headers {
-		if bodyJSON != "" && strings.EqualFold(key, "Content-Type") {
-			return fmt.Errorf("header %q cannot be overridden when --body is provided", "Content-Type")
+		if strings.EqualFold(key, "Content-Type") {
+			switch {
+			case bodyJSON != "":
+				return fmt.Errorf("header %q cannot be overridden when --body is provided", "Content-Type")
+			case body != nil:
+				return fmt.Errorf("header %q cannot be overridden when a request body is provided", "Content-Type")
+			}
 		}
 	}
 
