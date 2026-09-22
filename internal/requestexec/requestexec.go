@@ -62,14 +62,23 @@ type RequestSpec struct {
 	Method      string
 	Path        string
 	ParamsJSON  string
-	BodyJSON    string
-	Body        io.Reader
+
+	// BodyJSON is the standard JSON request body used by raw API calls and most
+	// system actions. BodyReader is for generic non-JSON payloads such as
+	// multipart/form-data; callers must provide only one body source.
+	BodyJSON   string
+	BodyReader io.Reader
+
+	// ContentType is applied only with BodyReader because JSON bodies always use
+	// application/json. DryRunBody is an optional safe representation of
+	// BodyReader payloads for --dry-run output; it is never sent to the upstream API.
 	ContentType string
 	DryRunBody  any
-	Headers     []string
-	Stage       string
-	Timeout     string
-	AuthConfig  api.AuthPolicy
+
+	Headers    []string
+	Stage      string
+	Timeout    string
+	AuthConfig api.AuthPolicy
 }
 
 // RequestResult contains the envelope produced by a single API request.
@@ -168,7 +177,7 @@ func executeRequest(runtime *Runtime, spec RequestSpec, timeoutErrorLabel string
 			"Use repeatable --header key:value entries",
 		)
 	}
-	if err := validateUserHeaders(headerMap, spec.BodyJSON, spec.Body); err != nil {
+	if err := validateUserHeaders(headerMap, spec.BodyJSON, spec.BodyReader); err != nil {
 		return nil, output.UserError(
 			"request_error",
 			err.Error(),
@@ -217,7 +226,7 @@ func executeRequest(runtime *Runtime, spec RequestSpec, timeoutErrorLabel string
 		URL:         fullURL,
 		ParamsJSON:  spec.ParamsJSON,
 		BodyJSON:    spec.BodyJSON,
-		Body:        spec.Body,
+		BodyReader:  spec.BodyReader,
 		ContentType: spec.ContentType,
 		DryRunBody:  spec.DryRunBody,
 		Headers:     headerMap,
@@ -274,9 +283,15 @@ func validateUserHeaders(headers map[string]string, bodyJSON string, body io.Rea
 		if strings.EqualFold(key, "Content-Type") {
 			switch {
 			case bodyJSON != "":
-				return fmt.Errorf("header %q cannot be overridden when --body is provided", "Content-Type")
+				return fmt.Errorf(
+					"header %q cannot be overridden when --body is provided",
+					"Content-Type",
+				)
 			case body != nil:
-				return fmt.Errorf("header %q cannot be overridden when a request body is provided", "Content-Type")
+				return fmt.Errorf(
+					"header %q cannot be overridden when a request body is provided",
+					"Content-Type",
+				)
 			}
 		}
 	}

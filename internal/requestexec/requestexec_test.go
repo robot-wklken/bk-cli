@@ -178,7 +178,13 @@ var _ = Describe("requestexec", func() {
 				strings.NewReader("body"),
 			)
 
-			Expect(err).To(MatchError(`header "Content-Type" cannot be overridden when a request body is provided`))
+			Expect(
+				err,
+			).To(
+				MatchError(
+					`header "Content-Type" cannot be overridden when a request body is provided`,
+				),
+			)
 		})
 
 		It("resolves tenant IDs from config only", func() {
@@ -490,6 +496,42 @@ var _ = Describe("requestexec", func() {
 			Expect(result.Envelope.Status).To(Equal(http.StatusCreated))
 			Expect(result.Envelope.Headers).To(HaveKeyWithValue("X-Request-Id", "req-123"))
 			Expect(result.Envelope.Data).To(Equal(map[string]any{"created": true}))
+		})
+
+		It("executes a raw non-JSON body through the shared request path", func() {
+			type capturedRequest struct {
+				contentType string
+				body        string
+			}
+			var captured capturedRequest
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				captured.contentType = r.Header.Get("Content-Type")
+				body, err := io.ReadAll(r.Body)
+				Expect(err).NotTo(HaveOccurred())
+				captured.body = string(body)
+
+				w.Header().Set("Content-Type", "application/json")
+				_, _ = w.Write([]byte(`{"ok":true}`))
+			}))
+			DeferCleanup(server.Close)
+
+			writeRequestExecContext("default", server.URL, false)
+
+			runtime, err := ResolveRuntime("", false, false)
+			Expect(err).NotTo(HaveOccurred())
+
+			result, err := ExecuteRequest(runtime, RequestSpec{
+				GatewayName: "bk-apigateway",
+				Method:      http.MethodPost,
+				Path:        "/api/v1/upload/",
+				BodyReader:  strings.NewReader("raw-body"),
+				ContentType: "application/octet-stream",
+				AuthConfig:  &api.AuthRequirements{},
+			})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(result.Envelope.OK).To(BeTrue())
+			Expect(captured.contentType).To(Equal("application/octet-stream"))
+			Expect(captured.body).To(Equal("raw-body"))
 		})
 
 		It("can execute HTTPS requests with self-signed certificates when insecure is enabled", func() {

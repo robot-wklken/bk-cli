@@ -1,15 +1,15 @@
-id: AIDEV-064
-name: aidev legacy gateway template dry run
+id: AIDEV-056
+name: aidev detail_private_collections happy path
 tags:
 - coverage-system_yaml
 - suite-integration
 steps:
-- name: init legacy context
+- name: init mock-backed context
   command:
   - context
   - init
   - --bk_api_url_tmpl
-  - https://{gateway_name}.apigw.te.example
+  - ${MOCK_API_BASE_URL}/{gateway_name}
   expect:
     exit_code: 0
     checks:
@@ -26,17 +26,20 @@ steps:
     checks:
     - path: ok
       equals: true
-- name: preview aidev spaces
+- name: detail private collections
   command:
   - aidev
-  - retrieve_private_spaces
-  - --keyword
-  - demo
-  - --dry-run
+  - detail_private_collections
+  - --collection_id
+  - '1'
+  - --space_id
+  - demo-space
   expect:
     exit_code: 0
     checks:
-    - path: dry_run
+    - path: ok
       equals: true
-    - path: request.url
-      contains: https://bkaidev.apigw.te.example/prod/openapi/aidev/private/v1/spaces/
+    - path: data.method
+      equals: GET
+    - path: data.path
+      contains: /bk-aidev/prod/openapi/aidev/private/v1/collections/1/

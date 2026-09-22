@@ -17,15 +17,15 @@ CRITICAL — 开始前 MUST 先读取 `../bk-cli-shared/SKILL.md`。共享 skill
 
 ## 当前覆盖范围
 
-`bk-cli aidev` 是 YAML action 集合，覆盖附件 OpenAPI 中的 AIDev 资源接口。常用资源包括：
+`bk-cli aidev` 主要是 YAML action 集合，并包含一个 Go-implemented 文件上传 action，覆盖附件 OpenAPI 中的 AIDev 资源接口。常用资源包括：
 
-- 空间：`retrieve_private_v1_spaces`
-- Skill：`list_private_v1_skills`、`create_private_v1_skills_upsert`、`retrieve_private_v1_skills`、`delete_private_v1_skills`、`retrieve_private_v1_skills_download`、`retrieve_private_v1_skills_versions`
-- MCP：`list_private_v1_mcps`、`create_private_v1_mcps`、`retrieve_private_v1_mcps`、`retrieve_private_v1_mcps_register_json`、`retrieve_private_v1_mcps_by_code`、`retrieve_private_v1_resource_mcps`
-- Prompt：`list_private_v1_prompts`、`upsert_private_v1_prompts`、`retrieve_private_v1_prompts`
-- 智能体：`list_private_v1_agents`、`create_private_v1_agents`、`retrieve_private_v1_agents`、`delete_private_v1_agents`、`publish_private_v1_agents`、`update_private_v1_agents`、`append_private_v1_agent_admins`
-- 知识库与知识文档：`create_private_v1_knowledgebase`、`list_private_v1_knowledgebase`、`query_private_v1_knowledgebase`、`create_private_v1_knowledges`、`list_private_v1_knowledges` 等
-- 凭证：`list_v1_credentiale_types`、`list_v1_credentials`、`create_v1_credentials`、`update_v1_credentials`、`delete_v1_credentials` 等
+- 空间：`retrieve_private_spaces`
+- Skill：`list_private_skills`、`create_private_skills_upsert`、`retrieve_private_skills`、`delete_private_skills`、`retrieve_private_skills_download`、`retrieve_private_skills_versions`
+- MCP：`list_private_mcps`、`create_private_mcps`、`retrieve_private_mcps`、`retrieve_private_mcps_register_json`、`retrieve_private_mcps_by_code`、`retrieve_private_resource_mcps`
+- Prompt：`list_private_prompts`、`upsert_private_prompts`、`retrieve_private_prompts`
+- 智能体：`list_private_agents`、`create_private_agents`、`retrieve_private_agents`、`delete_private_agents`、`publish_private_agents`、`update_private_agents`、`append_private_agent_admins`
+- 知识库与知识文档：`create_private_knowledgebase`、`list_private_knowledgebase`、`query_private_knowledgebase`、`create_private_knowledges`、`list_private_knowledges` 等
+- 凭证：`list_credentiale_types`、`list_credentials`、`create_credentials`、`update_credentials`、`delete_credentials` 等
 
 完整命令列表以 `bk-cli aidev --help` 为准，单个命令参数以 `bk-cli aidev <action> --help` 为准。
 
@@ -35,22 +35,22 @@ CRITICAL — 开始前 MUST 先读取 `../bk-cli-shared/SKILL.md`。共享 skill
 - CLI flag 名保持上游 OpenAPI 参数名不变，例如 `space_id`、`skill_id`、`mcp_type`、`agent_code`、`page_size`。
 - 带复杂 request body 的 action 统一通过共享 `--body '<json>'` 传入；执行时要求请求体的 action 会在本地校验 `--body` 非空。
 - 查看请求体结构时使用 `bk-cli aidev <action> -h --body-schema`。
-- `create_private_v1_upload` 是文件上传命令，使用 `--file`、`--space_id` 和可选 `--module` 发送 `multipart/form-data`，不使用 `--body`。
+- `create_private_upload` 是文件上传命令，使用 `--file`、`--space_id` 和可选 `--module` 发送 `multipart/form-data`，不使用 `--body`。
 
 ## 常用示例
 
 ```bash
-bk-cli aidev retrieve_private_v1_spaces --keyword demo
-bk-cli aidev create_private_v1_upload --file ./artifact.zip --space_id demo-space --module skill
-bk-cli aidev list_private_v1_skills --space_id demo-space --page 1 --page_size 20
-bk-cli aidev retrieve_private_v1_skills --skill_id 1 --space_id demo-space
-bk-cli aidev create_private_v1_skills_upsert --body '{"space_id":"demo-space","skill_code":"demo","skill_name":"Demo","description":"demo","url":"bkrepo://demo.zip"}'
-bk-cli aidev list_private_v1_mcps --space_id demo-space --mcp_type apigw
-bk-cli aidev retrieve_private_v1_mcps --mcp_type apigw --mcp_id 1 --space_id demo-space
-bk-cli aidev list_private_v1_agents --space_id demo-space --page 1 --page_size 20
-bk-cli aidev retrieve_private_v1_agents --agent_id 1 --space_id demo-space
-bk-cli aidev list_v1_credentials --space_id demo-space
-bk-cli aidev query_private_v1_knowledgebase --body '{"space_id":"demo-space","query":"hello"}'
+bk-cli aidev retrieve_private_spaces --keyword demo
+bk-cli aidev create_private_upload --file ./artifact.zip --space_id demo-space --module skill
+bk-cli aidev list_private_skills --space_id demo-space --page 1 --page_size 20
+bk-cli aidev retrieve_private_skills --skill_id 1 --space_id demo-space
+bk-cli aidev create_private_skills_upsert --body '{"space_id":"demo-space","skill_code":"demo","skill_name":"Demo","description":"demo","url":"bkrepo://demo.zip"}'
+bk-cli aidev list_private_mcps --space_id demo-space --mcp_type apigw
+bk-cli aidev retrieve_private_mcps --mcp_type apigw --mcp_id 1 --space_id demo-space
+bk-cli aidev list_private_agents --space_id demo-space --page 1 --page_size 20
+bk-cli aidev retrieve_private_agents --agent_id 1 --space_id demo-space
+bk-cli aidev list_credentials --space_id demo-space
+bk-cli aidev query_private_knowledgebase --body '{"space_id":"demo-space","query":"hello"}'
 ```
 
 ## 排障建议

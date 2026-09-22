@@ -161,7 +161,7 @@ var _ = Describe("BuildDryRunEnvelope", func() {
 		env := api.BuildDryRunEnvelope(&api.Request{
 			Method:      "POST",
 			URL:         "https://example.com/upload",
-			Body:        strings.NewReader("raw-body"),
+			BodyReader:  strings.NewReader("raw-body"),
 			ContentType: "multipart/form-data; boundary=test",
 			DryRunBody: map[string]any{
 				"file": "demo.txt",
@@ -170,6 +170,18 @@ var _ = Describe("BuildDryRunEnvelope", func() {
 
 		Expect(env.Request.Headers).To(HaveKeyWithValue("Content-Type", "multipart/form-data; boundary=test"))
 		Expect(env.Request.Body).To(Equal(map[string]any{"file": "demo.txt"}))
+	})
+
+	It("omits raw non-JSON body bytes from dry-run envelopes without safe metadata", func() {
+		env := api.BuildDryRunEnvelope(&api.Request{
+			Method:      "POST",
+			URL:         "https://example.com/upload",
+			BodyReader:  strings.NewReader("raw-body"),
+			ContentType: "application/octet-stream",
+		})
+
+		Expect(env.Request.Headers).To(HaveKeyWithValue("Content-Type", "application/octet-stream"))
+		Expect(env.Request.Body).To(BeNil())
 	})
 
 	It("redacts auth header", func() {

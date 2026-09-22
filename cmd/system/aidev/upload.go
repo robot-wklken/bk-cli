@@ -37,7 +37,7 @@ const (
 	uploadPath  = "/openapi/aidev/private/v1/upload/"
 )
 
-func newCreatePrivateV1UploadCmd(deps systemcmd.BuildDeps) *cobra.Command {
+func newCreatePrivateUploadCmd(deps systemcmd.BuildDeps) *cobra.Command {
 	var (
 		stage   string
 		file    string
@@ -47,14 +47,14 @@ func newCreatePrivateV1UploadCmd(deps systemcmd.BuildDeps) *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "create_private_v1_upload",
+		Use:   "create_private_upload",
 		Short: "统一上传 skill / knowledge 制品，返回路径、元数据和 expires_at；默认 48 小时过期，由公共任务清理",
 		Args:  cobra.NoArgs,
 		Long: `统一上传 skill / knowledge 制品，返回路径、元数据和 expires_at；默认 48 小时过期，由公共任务清理。
 
 该接口使用 multipart/form-data。必须传入 --file 和 --space_id，--module 默认 skill。`,
-		Example: "  bk-cli aidev create_private_v1_upload --file ./artifact.zip --space_id demo-space\n" +
-			"  bk-cli aidev create_private_v1_upload --file ./knowledge.zip --space_id demo-space --module knowledge",
+		Example: "  bk-cli aidev create_private_upload --file ./artifact.zip --space_id demo-space\n" +
+			"  bk-cli aidev create_private_upload --file ./knowledge.zip --space_id demo-space --module knowledge",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := systemcmd.ValidateNonEmptyStringFlag("file", file); err != nil {
 				return err
@@ -97,11 +97,11 @@ func executeUpload(
 		return err
 	}
 
-	return systemcmd.ExecuteRequest(cmd, runtime, "create_private_v1_upload", syslib.RequestSpec{
+	return systemcmd.ExecuteRequest(cmd, runtime, "create_private_upload", syslib.RequestSpec{
 		GatewayName: gatewayName,
 		Method:      "POST",
 		Path:        uploadPath,
-		Body:        body,
+		BodyReader:  body,
 		ContentType: contentType,
 		DryRunBody: map[string]any{
 			"file":     filepath.Base(filePath),

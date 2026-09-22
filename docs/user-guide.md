@@ -228,7 +228,7 @@ bk-cli api bk-demo POST /api/v2/resources/ \
 
 ```
 bk-cli apigateway list_gateways --name bk-iam --fuzzy
-bk-cli aidev retrieve_private_v1_spaces --keyword demo
+bk-cli aidev retrieve_private_spaces --keyword demo
 bk-cli cmdb search_business --bk_biz_id 2
 bk-cli paas create_cloud_native_app -h --body-schema
 ```
@@ -237,7 +237,7 @@ bk-cli paas create_cloud_native_app -h --body-schema
 
 ```
 bk-cli apigateway list_gateways --help
-bk-cli aidev create_private_v1_skills_upsert -h --body-schema
+bk-cli aidev create_private_skills_upsert -h --body-schema
 bk-cli cmdb search_business --help
 ```
 

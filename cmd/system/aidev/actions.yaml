@@ -2,7 +2,7 @@ name: aidev
 gateway_name: bk-aidev
 description: "BlueKing AIDev resource commands"
 actions:
-  - name: retrieve_private_v1_spaces
+  - name: retrieve_private_spaces
     description: "返回当前用户在 IAM 中有 VIEW_SPACE 权限的所有空间；限定当前租户，无需传入 space_id，可按 keyword 搜索"
     method: GET
     path: "/openapi/aidev/private/v1/spaces/"
@@ -16,9 +16,9 @@ actions:
         type: string
         description: "搜索关键词，支持空间名称模糊搜索"
     examples:
-      - "bk-cli aidev retrieve_private_v1_spaces"
+      - "bk-cli aidev retrieve_private_spaces"
 
-  - name: list_private_v1_skills
+  - name: list_private_skills
     description: "省略 space_id 或传 all 时查询当前租户内所有有权限空间的资源；传具体 ID 时查询该空间。支持筛选和统一分页。"
     method: GET
     path: "/openapi/aidev/private/v1/skills/"
@@ -68,9 +68,9 @@ actions:
         type: string
         description: "标签名称"
     examples:
-      - "bk-cli aidev list_private_v1_skills"
+      - "bk-cli aidev list_private_skills"
 
-  - name: create_private_v1_skills_upsert
+  - name: create_private_skills_upsert
     description: "Upsert 逻辑：skill_code 不存在则创建，存在则更新；默认允许覆盖已存在的同版本，传 allow_version_overwrite=false 可禁止覆盖"
     method: POST
     path: "/openapi/aidev/private/v1/skills/upsert/"
@@ -172,9 +172,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_private_v1_skills_upsert --body '{\"space_id\":\"demo-space\",\"skill_code\":\"demo-skill\",\"skill_name\":\"Demo Skill\",\"description\":\"demo description\",\"url\":\"bkrepo://demo.zip\"}'"
+      - "bk-cli aidev create_private_skills_upsert --body '{\"space_id\":\"demo-space\",\"skill_code\":\"demo-skill\",\"skill_name\":\"Demo Skill\",\"description\":\"demo description\",\"url\":\"bkrepo://demo.zip\"}'"
 
-  - name: retrieve_private_v1_skills
+  - name: retrieve_private_skills
     description: "获取指定 Skill 的详细信息"
     method: GET
     path: "/openapi/aidev/private/v1/skills/{skill_id}/"
@@ -198,9 +198,9 @@ actions:
         type: string
         description: "版本号，不传则返回最新版本"
     examples:
-      - "bk-cli aidev retrieve_private_v1_skills --skill_id 1 --space_id demo-space"
+      - "bk-cli aidev retrieve_private_skills --skill_id 1 --space_id demo-space"
 
-  - name: delete_private_v1_skills
+  - name: delete_private_skills
     description: "归档指定 Skill"
     method: DELETE
     path: "/openapi/aidev/private/v1/skills/{skill_id}/"
@@ -215,9 +215,9 @@ actions:
         description: "Skill ID"
         required: true
     examples:
-      - "bk-cli aidev delete_private_v1_skills --skill_id 1"
+      - "bk-cli aidev delete_private_skills --skill_id 1"
 
-  - name: retrieve_private_v1_skills_download
+  - name: retrieve_private_skills_download
     description: "获取指定 Skill 文件的临时下载链接"
     method: GET
     path: "/openapi/aidev/private/v1/skills/{skill_id}/download/"
@@ -237,9 +237,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev retrieve_private_v1_skills_download --skill_id 1 --space_id demo-space"
+      - "bk-cli aidev retrieve_private_skills_download --skill_id 1 --space_id demo-space"
 
-  - name: retrieve_private_v1_skills_versions
+  - name: retrieve_private_skills_versions
     description: "获取指定 Skill 的历史版本列表"
     method: GET
     path: "/openapi/aidev/private/v1/skills/{skill_id}/versions/"
@@ -259,9 +259,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev retrieve_private_v1_skills_versions --skill_id 1 --space_id demo-space"
+      - "bk-cli aidev retrieve_private_skills_versions --skill_id 1 --space_id demo-space"
 
-  - name: list_private_v1_mcps
+  - name: list_private_mcps
     description: "省略 space_id 或传 all 时查询当前租户内所有有权限空间的资源；传具体 ID 时查询该空间。支持筛选和统一分页。"
     method: GET
     path: "/openapi/aidev/private/v1/mcps/"
@@ -335,9 +335,9 @@ actions:
         type: string
         description: "更新人"
     examples:
-      - "bk-cli aidev list_private_v1_mcps"
+      - "bk-cli aidev list_private_mcps"
 
-  - name: create_private_v1_mcps
+  - name: create_private_mcps
     description: "在当前用户有创建权限的空间中创建 MCP"
     method: POST
     path: "/openapi/aidev/private/v1/mcps/"
@@ -471,9 +471,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_private_v1_mcps --body '{\"space_id\":\"demo-space\",\"mcp_name\":\"Demo MCP\",\"mcp_code\":\"demo-mcp\",\"url\":\"bkrepo://demo.zip\",\"protocol\":\"stdio\",\"credential_type\":\"api_key\",\"description\":\"demo description\"}'"
+      - "bk-cli aidev create_private_mcps --body '{\"space_id\":\"demo-space\",\"mcp_name\":\"Demo MCP\",\"mcp_code\":\"demo-mcp\",\"url\":\"bkrepo://demo.zip\",\"protocol\":\"stdio\",\"credential_type\":\"api_key\",\"description\":\"demo description\"}'"
 
-  - name: retrieve_private_v1_mcps
+  - name: retrieve_private_mcps
     description: "获取指定 MCP 的详细信息，当前 APIGW MCP 会基于列表结果组装详情，后续接入专用详情接口后可无缝切换"
     method: GET
     path: "/openapi/aidev/private/v1/mcps/{mcp_type}/{mcp_id}/"
@@ -502,9 +502,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev retrieve_private_v1_mcps --mcp_id 1 --mcp_type apigw --space_id demo-space"
+      - "bk-cli aidev retrieve_private_mcps --mcp_id 1 --mcp_type apigw --space_id demo-space"
 
-  - name: retrieve_private_v1_mcps_register_json
+  - name: retrieve_private_mcps_register_json
     description: "获取指定 MCP 的注册 JSON 结构，可直接用于注册 MCP 工具；当前 APIGW MCP 会基于列表结果组装返回"
     method: GET
     path: "/openapi/aidev/private/v1/mcps/{mcp_type}/{mcp_id}/register_json/"
@@ -533,9 +533,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev retrieve_private_v1_mcps_register_json --mcp_id 1 --mcp_type apigw --space_id demo-space"
+      - "bk-cli aidev retrieve_private_mcps_register_json --mcp_id 1 --mcp_type apigw --space_id demo-space"
 
-  - name: query_private_v1_knowledgebase
+  - name: query_private_knowledgebase
     description: "基于当前用户身份和指定空间发起知识库查询，查询能力与应用态 knowledgebase query 保持一致。"
     method: POST
     path: "/openapi/aidev/private/v1/knowledgebase/query/"
@@ -978,9 +978,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev query_private_v1_knowledgebase --body '{\"space_id\":\"demo-space\",\"query\":\"hello\"}'"
+      - "bk-cli aidev query_private_knowledgebase --body '{\"space_id\":\"demo-space\",\"query\":\"hello\"}'"
 
-  - name: list_private_v1_prompts
+  - name: list_private_prompts
     description: "省略 space_id 或传 all 时查询当前租户内所有有权限空间的资源；传具体 ID 时查询该空间。支持筛选和统一分页。"
     method: GET
     path: "/openapi/aidev/private/v1/prompts/"
@@ -1042,9 +1042,9 @@ actions:
         type: string
         description: "标签名称"
     examples:
-      - "bk-cli aidev list_private_v1_prompts"
+      - "bk-cli aidev list_private_prompts"
 
-  - name: upsert_private_v1_prompts
+  - name: upsert_private_prompts
     description: "Upsert 逻辑：prompt_code 在当前租户+空间不存在则创建，存在则更新"
     method: POST
     path: "/openapi/aidev/private/v1/prompts/upsert/"
@@ -1129,9 +1129,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev upsert_private_v1_prompts --body '{\"space_id\":\"demo-space\",\"prompt_code\":\"demo-prompt\",\"prompt_name\":\"Demo Prompt\",\"content\":\"demo content\"}'"
+      - "bk-cli aidev upsert_private_prompts --body '{\"space_id\":\"demo-space\",\"prompt_code\":\"demo-prompt\",\"prompt_name\":\"Demo Prompt\",\"content\":\"demo content\"}'"
 
-  - name: retrieve_private_v1_prompts
+  - name: retrieve_private_prompts
     description: "获取指定 Prompt 的详细信息"
     method: GET
     path: "/openapi/aidev/private/v1/prompts/{prompt_id}/"
@@ -1151,9 +1151,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev retrieve_private_v1_prompts --prompt_id 1 --space_id demo-space"
+      - "bk-cli aidev retrieve_private_prompts --prompt_id 1 --space_id demo-space"
 
-  - name: list_private_v1_agents
+  - name: list_private_agents
     description: "省略 space_id 或传 all 时查询当前租户内所有有权限空间的资源；传具体 ID 时查询该空间。支持筛选和统一分页。"
     method: GET
     path: "/openapi/aidev/private/v1/agents/"
@@ -1211,9 +1211,9 @@ actions:
         type: string
         description: "标签名称"
     examples:
-      - "bk-cli aidev list_private_v1_agents"
+      - "bk-cli aidev list_private_agents"
 
-  - name: create_private_v1_agents
+  - name: create_private_agents
     description: "在当前用户有创建权限的空间中创建智能体"
     method: POST
     path: "/openapi/aidev/private/v1/agents/"
@@ -1335,9 +1335,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_private_v1_agents --body '{\"space_id\":\"demo-space\",\"agent_name\":\"Demo Agent\",\"agent_code\":\"demo-agent\"}'"
+      - "bk-cli aidev create_private_agents --body '{\"space_id\":\"demo-space\",\"agent_name\":\"Demo Agent\",\"agent_code\":\"demo-agent\"}'"
 
-  - name: retrieve_private_v1_agents
+  - name: retrieve_private_agents
     description: "获取指定智能体的详细信息"
     method: GET
     path: "/openapi/aidev/private/v1/agents/{agent_id}/"
@@ -1361,9 +1361,9 @@ actions:
         type: string
         description: "已发布版本号；不传返回当前草稿配置"
     examples:
-      - "bk-cli aidev retrieve_private_v1_agents --agent_id 1 --space_id demo-space"
+      - "bk-cli aidev retrieve_private_agents --agent_id 1 --space_id demo-space"
 
-  - name: delete_private_v1_agents
+  - name: delete_private_agents
     description: "归档指定智能体；已发布的插件应用将异步从开发者中心下架"
     method: DELETE
     path: "/openapi/aidev/private/v1/agents/{agent_id}/"
@@ -1378,9 +1378,9 @@ actions:
         description: "Agent ID"
         required: true
     examples:
-      - "bk-cli aidev delete_private_v1_agents --agent_id 1"
+      - "bk-cli aidev delete_private_agents --agent_id 1"
 
-  - name: publish_private_v1_agents
+  - name: publish_private_agents
     description: "发布智能体配置，不传版本号时自动递增"
     method: POST
     path: "/openapi/aidev/private/v1/agents/{agent_id}/publish/"
@@ -1455,9 +1455,9 @@ actions:
         description: "Agent ID"
         required: true
     examples:
-      - "bk-cli aidev publish_private_v1_agents --agent_id 1 --body '{\"space_id\":\"demo-space\",\"agent_id\":1}'"
+      - "bk-cli aidev publish_private_agents --agent_id 1 --body '{\"space_id\":\"demo-space\",\"agent_id\":1}'"
 
-  - name: update_private_v1_agents
+  - name: update_private_agents
     description: "更新智能体（名称、描述、模型配置、提示词、知识库、工具、MCP 等）"
     method: PUT
     path: "/openapi/aidev/private/v1/agents/{agent_id}/update/"
@@ -2212,9 +2212,9 @@ actions:
         description: "Agent ID"
         required: true
     examples:
-      - "bk-cli aidev update_private_v1_agents --agent_id 1 --body '{\"space_id\":\"demo-space\",\"agent_id\":1}'"
+      - "bk-cli aidev update_private_agents --agent_id 1 --body '{\"space_id\":\"demo-space\",\"agent_id\":1}'"
 
-  - name: create_private_v1_knowledgebase
+  - name: create_private_knowledgebase
     description: "创建新的知识库"
     method: POST
     path: "/openapi/aidev/private/v1/knowledgebase/"
@@ -2283,9 +2283,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_private_v1_knowledgebase --body '{\"space_id\":\"demo-space\",\"name\":\"demo\"}'"
+      - "bk-cli aidev create_private_knowledgebase --body '{\"space_id\":\"demo-space\",\"name\":\"demo\"}'"
 
-  - name: info_private_v1_knowledgebase
+  - name: info_private_knowledgebase
     description: "获取知识库的知识统计信息"
     method: GET
     path: "/openapi/aidev/private/v1/knowledgebase/info/"
@@ -2300,9 +2300,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev info_private_v1_knowledgebase --space_id demo-space"
+      - "bk-cli aidev info_private_knowledgebase --space_id demo-space"
 
-  - name: list_private_v1_knowledgebase
+  - name: list_private_knowledgebase
     description: "省略 space_id 或传 all 时查询当前租户内所有有权限空间的资源；传具体 ID 时查询该空间。支持筛选和统一分页。"
     method: POST
     path: "/openapi/aidev/private/v1/knowledgebase/list/"
@@ -2460,9 +2460,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev list_private_v1_knowledgebase"
+      - "bk-cli aidev list_private_knowledgebase"
 
-  - name: delete_private_v1_knowledgebase
+  - name: delete_private_knowledgebase
     description: "删除指定的知识库"
     method: DELETE
     path: "/openapi/aidev/private/v1/knowledgebase/{id}/"
@@ -2476,9 +2476,9 @@ actions:
         type: int
         required: true
     examples:
-      - "bk-cli aidev delete_private_v1_knowledgebase --id 1"
+      - "bk-cli aidev delete_private_knowledgebase --id 1"
 
-  - name: update_private_v1_knowledgebase
+  - name: update_private_knowledgebase
     description: "更新指定知识库的内容"
     method: PATCH
     path: "/openapi/aidev/private/v1/knowledgebase/{id}/update/"
@@ -2549,9 +2549,9 @@ actions:
         type: int
         required: true
     examples:
-      - "bk-cli aidev update_private_v1_knowledgebase --id 1 --body '{\"space_id\":\"demo-space\",\"id\":1}'"
+      - "bk-cli aidev update_private_knowledgebase --id 1 --body '{\"space_id\":\"demo-space\",\"id\":1}'"
 
-  - name: create_private_v1_knowledges
+  - name: create_private_knowledges
     description: "创建新的知识文档"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/"
@@ -2683,9 +2683,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_private_v1_knowledges --body '{\"space_id\":\"demo-space\",\"knowledge_base_id\":1,\"knowledge_name\":\"Demo Knowledge\",\"file_name\":\"demo.md\",\"file_path\":\"bkrepo://demo.md\"}'"
+      - "bk-cli aidev create_private_knowledges --body '{\"space_id\":\"demo-space\",\"knowledge_base_id\":1,\"knowledge_name\":\"Demo Knowledge\",\"file_name\":\"demo.md\",\"file_path\":\"bkrepo://demo.md\"}'"
 
-  - name: batch_create_private_v1_knowledges
+  - name: batch_create_private_knowledges
     description: "批量创建多个知识文档"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/batch/create/"
@@ -2721,9 +2721,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev batch_create_private_v1_knowledges --body '{\"space_id\":\"demo-space\",\"items\":[]}'"
+      - "bk-cli aidev batch_create_private_knowledges --body '{\"space_id\":\"demo-space\",\"items\":[]}'"
 
-  - name: batch_delete_private_v1_knowledges
+  - name: batch_delete_private_knowledges
     description: "批量删除多个知识文档"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/batch/delete/"
@@ -2758,9 +2758,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev batch_delete_private_v1_knowledges --body '{\"space_id\":\"demo-space\",\"ids\":[]}'"
+      - "bk-cli aidev batch_delete_private_knowledges --body '{\"space_id\":\"demo-space\",\"ids\":[]}'"
 
-  - name: batch_update_private_v1_knowledges
+  - name: batch_update_private_knowledges
     description: "批量更新多个知识文档"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/batch/update/"
@@ -2796,9 +2796,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev batch_update_private_v1_knowledges --body '{\"space_id\":\"demo-space\",\"items\":[]}'"
+      - "bk-cli aidev batch_update_private_knowledges --body '{\"space_id\":\"demo-space\",\"items\":[]}'"
 
-  - name: list_private_v1_knowledges
+  - name: list_private_knowledges
     description: "获取指定知识库下的知识列表"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/list/"
@@ -2889,9 +2889,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev list_private_v1_knowledges --body '{\"space_id\":\"demo-space\"}'"
+      - "bk-cli aidev list_private_knowledges --body '{\"space_id\":\"demo-space\"}'"
 
-  - name: preview_link_private_v1_knowledges
+  - name: preview_link_private_knowledges
     description: "预览远程链接内容"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/preview_link/"
@@ -2941,9 +2941,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev preview_link_private_v1_knowledges --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\"}'"
+      - "bk-cli aidev preview_link_private_knowledges --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\"}'"
 
-  - name: status_info_private_v1_knowledges
+  - name: status_info_private_knowledges
     description: "获取知识的状态统计信息"
     method: GET
     path: "/openapi/aidev/private/v1/knowledges/status_info/"
@@ -2964,9 +2964,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev status_info_private_v1_knowledges --space_id demo-space"
+      - "bk-cli aidev status_info_private_knowledges --space_id demo-space"
 
-  - name: structure_header_private_v1_knowledges
+  - name: structure_header_private_knowledges
     description: "获取远程文件的结构头信息"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/structure_header/"
@@ -3008,9 +3008,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev structure_header_private_v1_knowledges --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\"}'"
+      - "bk-cli aidev structure_header_private_knowledges --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\"}'"
 
-  - name: trigger_private_v1_knowledges
+  - name: trigger_private_knowledges
     description: "触发知识更新操作"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/trigger/"
@@ -3052,9 +3052,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev trigger_private_v1_knowledges --body '{\"space_id\":\"demo-space\"}'"
+      - "bk-cli aidev trigger_private_knowledges --body '{\"space_id\":\"demo-space\"}'"
 
-  - name: update_frequency_type_private_v1_knowledges
+  - name: update_frequency_type_private_knowledges
     description: "获取知识更新频率类型列表"
     method: GET
     path: "/openapi/aidev/private/v1/knowledges/update_frequency_type/"
@@ -3063,9 +3063,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev update_frequency_type_private_v1_knowledges"
+      - "bk-cli aidev update_frequency_type_private_knowledges"
 
-  - name: verify_private_v1_knowledges
+  - name: verify_private_knowledges
     description: "校验知识链接是否有效"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/verify/"
@@ -3107,9 +3107,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev verify_private_v1_knowledges --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\",\"knowledgebase_type\":\"document\"}'"
+      - "bk-cli aidev verify_private_knowledges --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\",\"knowledgebase_type\":\"document\"}'"
 
-  - name: delete_private_v1_knowledges
+  - name: delete_private_knowledges
     description: "删除指定的知识"
     method: DELETE
     path: "/openapi/aidev/private/v1/knowledges/{id}/"
@@ -3123,9 +3123,9 @@ actions:
         type: int
         required: true
     examples:
-      - "bk-cli aidev delete_private_v1_knowledges --id 1"
+      - "bk-cli aidev delete_private_knowledges --id 1"
 
-  - name: index_info_private_v1_knowledges
+  - name: index_info_private_knowledges
     description: "获取指定知识的索引配置信息"
     method: GET
     path: "/openapi/aidev/private/v1/knowledges/{id}/index_info/"
@@ -3144,9 +3144,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev index_info_private_v1_knowledges --id 1 --space_id demo-space"
+      - "bk-cli aidev index_info_private_knowledges --id 1 --space_id demo-space"
 
-  - name: preview_private_v1_knowledges
+  - name: preview_private_knowledges
     description: "预览指定知识的内容"
     method: GET
     path: "/openapi/aidev/private/v1/knowledges/{id}/preview/"
@@ -3165,9 +3165,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev preview_private_v1_knowledges --id 1 --space_id demo-space"
+      - "bk-cli aidev preview_private_knowledges --id 1 --space_id demo-space"
 
-  - name: update_private_v1_knowledges
+  - name: update_private_knowledges
     description: "更新指定知识的内容"
     method: PATCH
     path: "/openapi/aidev/private/v1/knowledges/{id}/update/"
@@ -3283,9 +3283,9 @@ actions:
         type: int
         required: true
     examples:
-      - "bk-cli aidev update_private_v1_knowledges --id 1 --body '{\"space_id\":\"demo-space\",\"id\":1}'"
+      - "bk-cli aidev update_private_knowledges --id 1 --body '{\"space_id\":\"demo-space\",\"id\":1}'"
 
-  - name: list_v1_credentiale_types
+  - name: list_credentiale_types
     description: "获取所有可用的凭证类型及其配置参数"
     method: GET
     path: "/openapi/aidev/private/v1/credential_types/"
@@ -3294,9 +3294,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev list_v1_credentiale_types"
+      - "bk-cli aidev list_credentiale_types"
 
-  - name: list_v1_credentials
+  - name: list_credentials
     description: "省略 space_id 或传 all 时查询当前租户内所有有权限空间的资源；传具体 ID 时查询该空间。支持筛选和统一分页。"
     method: GET
     path: "/openapi/aidev/private/v1/credentials/"
@@ -3334,9 +3334,9 @@ actions:
         type: string
         description: "空间 ID；省略或 all 表示所有有权限的空间"
     examples:
-      - "bk-cli aidev list_v1_credentials"
+      - "bk-cli aidev list_credentials"
 
-  - name: create_v1_credentials
+  - name: create_credentials
     description: "创建新的凭证配置"
     method: POST
     path: "/openapi/aidev/private/v1/credentials/"
@@ -3413,9 +3413,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_v1_credentials --body '{\"credential_name\":\"demo-credential\",\"credential_type\":\"api_key\",\"credential_detail\":\"demo-credential-detail\",\"space_id\":\"demo-space\"}'"
+      - "bk-cli aidev create_credentials --body '{\"credential_name\":\"demo-credential\",\"credential_type\":\"api_key\",\"credential_detail\":\"demo-credential-detail\",\"space_id\":\"demo-space\"}'"
 
-  - name: batch_delete_v1_credentials
+  - name: batch_delete_credentials
     description: "批量删除指定凭证"
     method: POST
     path: "/openapi/aidev/private/v1/credentials/batch_delete/"
@@ -3452,9 +3452,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev batch_delete_v1_credentials --body '{\"space_id\":\"demo-space\",\"credential_ids\":[]}'"
+      - "bk-cli aidev batch_delete_credentials --body '{\"space_id\":\"demo-space\",\"credential_ids\":[]}'"
 
-  - name: bind_v1_credentials
+  - name: bind_credentials
     description: "将凭证绑定到指定资源"
     method: POST
     path: "/openapi/aidev/private/v1/credentials/bind/"
@@ -3506,9 +3506,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev bind_v1_credentials --body '{\"space_id\":\"demo-space\",\"credential_id\":1,\"resource_type\":\"skill\",\"resource_id\":1}'"
+      - "bk-cli aidev bind_credentials --body '{\"space_id\":\"demo-space\",\"credential_id\":1,\"resource_type\":\"skill\",\"resource_id\":1}'"
 
-  - name: unbind_v1_credentials
+  - name: unbind_credentials
     description: "解绑凭证与资源的关联"
     method: POST
     path: "/openapi/aidev/private/v1/credentials/unbind/"
@@ -3560,9 +3560,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev unbind_v1_credentials --body '{\"space_id\":\"demo-space\",\"credential_id\":1,\"resource_type\":\"skill\",\"resource_id\":1}'"
+      - "bk-cli aidev unbind_credentials --body '{\"space_id\":\"demo-space\",\"credential_id\":1,\"resource_type\":\"skill\",\"resource_id\":1}'"
 
-  - name: delete_v1_credentials
+  - name: delete_credentials
     description: "删除指定凭证"
     method: DELETE
     path: "/openapi/aidev/private/v1/credentials/{credential_id}/"
@@ -3577,9 +3577,9 @@ actions:
         description: "凭证 ID"
         required: true
     examples:
-      - "bk-cli aidev delete_v1_credentials --credential_id 1"
+      - "bk-cli aidev delete_credentials --credential_id 1"
 
-  - name: list_references_v1_credentials
+  - name: list_references_credentials
     description: "获取凭证被哪些资源引用"
     method: GET
     path: "/openapi/aidev/private/v1/credentials/{credential_id}/references/"
@@ -3599,9 +3599,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev list_references_v1_credentials --credential_id 1 --space_id demo-space"
+      - "bk-cli aidev list_references_credentials --credential_id 1 --space_id demo-space"
 
-  - name: update_v1_credentials
+  - name: update_credentials
     description: "更新指定凭证的配置"
     method: PATCH
     path: "/openapi/aidev/private/v1/credentials/{credential_id}/update/"
@@ -3690,9 +3690,9 @@ actions:
         description: "凭证 ID"
         required: true
     examples:
-      - "bk-cli aidev update_v1_credentials --credential_id 1 --body '{\"credential_name\":\"demo-credential\",\"credential_type\":\"api_key\",\"credential_detail\":\"demo-credential-detail\",\"space_id\":\"demo-space\",\"credential_id\":1}'"
+      - "bk-cli aidev update_credentials --credential_id 1 --body '{\"credential_name\":\"demo-credential\",\"credential_type\":\"api_key\",\"credential_detail\":\"demo-credential-detail\",\"space_id\":\"demo-space\",\"credential_id\":1}'"
 
-  - name: reclean_private_v1_knowledges
+  - name: reclean_private_knowledges
     description: "按当前或指定导入链路重建知识产物，与管理端一键重建口径一致"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/reclean/"
@@ -3748,9 +3748,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev reclean_private_v1_knowledges --body '{\"space_id\":\"demo-space\"}'"
+      - "bk-cli aidev reclean_private_knowledges --body '{\"space_id\":\"demo-space\"}'"
 
-  - name: list_private_v1_resource_references
+  - name: list_private_resource_references
     description: "按资源类型和实例 ID 查询引用该资源的 Agent；调用者必须拥有资源所属空间的使用权限。"
     method: GET
     path: "/openapi/aidev/private/v1/resources/{resource_type}/{instance_id}/references/"
@@ -3775,9 +3775,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev list_private_v1_resource_references --instance_id 1 --resource_type skill --space_id demo-space"
+      - "bk-cli aidev list_private_resource_references --instance_id 1 --resource_type skill --space_id demo-space"
 
-  - name: list_private_v1_collections
+  - name: list_private_collections
     description: "处理 GET 请求：合并 query 与 path params。"
     method: GET
     path: "/openapi/aidev/private/v1/collections/"
@@ -3805,9 +3805,9 @@ actions:
         type: string
         description: "空间 ID；省略或 all 表示所有有权限的空间"
     examples:
-      - "bk-cli aidev list_private_v1_collections"
+      - "bk-cli aidev list_private_collections"
 
-  - name: upsert_private_v1_collections
+  - name: upsert_private_collections
     description: "带请求体的 method 通用处理：合并 body 与 path params。"
     method: POST
     path: "/openapi/aidev/private/v1/collections/upsert/"
@@ -3918,9 +3918,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev upsert_private_v1_collections --body '{\"space_id\":\"demo-space\",\"collection_code\":\"demo-collection\",\"collection_name\":\"Demo Collection\",\"content\":[]}'"
+      - "bk-cli aidev upsert_private_collections --body '{\"space_id\":\"demo-space\",\"collection_code\":\"demo-collection\",\"collection_name\":\"Demo Collection\",\"content\":[]}'"
 
-  - name: detail_private_v1_collections
+  - name: detail_private_collections
     description: "处理 GET 请求：合并 query 与 path params。"
     method: GET
     path: "/openapi/aidev/private/v1/collections/{collection_id}/"
@@ -3939,9 +3939,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev detail_private_v1_collections --collection_id 1 --space_id demo-space"
+      - "bk-cli aidev detail_private_collections --collection_id 1 --space_id demo-space"
 
-  - name: archive_import_private_v1_knowledges
+  - name: archive_import_private_knowledges
     description: "异步导入上传或远程ZIP，覆盖目标目录内容；通过相同anchor_path的status_info查询进度"
     method: POST
     path: "/openapi/aidev/private/v1/knowledges/archive/import/"
@@ -4026,9 +4026,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev archive_import_private_v1_knowledges --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\",\"file_name\":\"demo.md\",\"file_type\":\"demo-file_type\",\"anchor_path\":\"/\"}'"
+      - "bk-cli aidev archive_import_private_knowledges --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\",\"file_name\":\"demo.md\",\"file_type\":\"demo-file_type\",\"anchor_path\":\"/\"}'"
 
-  - name: retrieve_private_v1_mcps_by_code
+  - name: retrieve_private_mcps_by_code
     description: "space_id 可选；传入 agent_code 时先校验调用方对智能体所属空间的权限，再查询 MCP。"
     method: GET
     path: "/openapi/aidev/private/v1/mcps/by-code/{mcp_code}/"
@@ -4055,9 +4055,9 @@ actions:
         type: string
         description: "空间 ID；省略或 all 表示所有有权限的空间"
     examples:
-      - "bk-cli aidev retrieve_private_v1_mcps_by_code --mcp_code demo-mcp"
+      - "bk-cli aidev retrieve_private_mcps_by_code --mcp_code demo-mcp"
 
-  - name: retrieve_private_v1_resource_mcps
+  - name: retrieve_private_resource_mcps
     description: "获取指定资源型 MCP 的详细信息"
     method: GET
     path: "/openapi/aidev/private/v1/mcps/{mcp_id}/"
@@ -4077,9 +4077,9 @@ actions:
         description: "空间 ID，必填"
         required: true
     examples:
-      - "bk-cli aidev retrieve_private_v1_resource_mcps --mcp_id 1 --space_id demo-space"
+      - "bk-cli aidev retrieve_private_resource_mcps --mcp_id 1 --space_id demo-space"
 
-  - name: create_private_v1_space_manage_apply_resources
+  - name: create_private_space_manage_apply_resources
     description: "用户态跨空间资源申请"
     method: POST
     path: "/openapi/aidev/private/v1/space_manage/apply_resources/"
@@ -4146,9 +4146,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_private_v1_space_manage_apply_resources --body '{\"space_id\":\"demo-space\",\"resource_type\":\"skill\",\"resource_ids\":[]}'"
+      - "bk-cli aidev create_private_space_manage_apply_resources --body '{\"space_id\":\"demo-space\",\"resource_type\":\"skill\",\"resource_ids\":[]}'"
 
-  - name: create_private_v1_upload_status
+  - name: create_private_upload_status
     description: "knowledge / skill 共用；上传失败或超时后可查询；文件不完整时返回错误，不自动重新上传"
     method: POST
     path: "/openapi/aidev/private/v1/upload/status/"
@@ -4179,9 +4179,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_private_v1_upload_status --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\"}'"
+      - "bk-cli aidev create_private_upload_status --body '{\"space_id\":\"demo-space\",\"url\":\"bkrepo://demo.zip\"}'"
 
-  - name: create_private_v1_upload_url
+  - name: create_private_upload_url
     description: "knowledge / skill 共用；有效期默认 15 分钟、仅可上传一次；文件直传 BKRepo 后分别调用知识 ZIP 导入或 Skill upsert"
     method: POST
     path: "/openapi/aidev/private/v1/upload/url/"
@@ -4227,9 +4227,9 @@ actions:
       userVerifiedRequired: true
       resourcePermissionRequired: true
     examples:
-      - "bk-cli aidev create_private_v1_upload_url --body '{\"space_id\":\"demo-space\",\"file_name\":\"demo.md\"}'"
+      - "bk-cli aidev create_private_upload_url --body '{\"space_id\":\"demo-space\",\"file_name\":\"demo.md\"}'"
 
-  - name: append_private_v1_agent_admins
+  - name: append_private_agent_admins
     description: "需空间访问和智能体管理权限；仅追加 PaaS 插件管理员，保留原成员，不修改使用者或空间 IAM 权限"
     method: POST
     path: "/openapi/aidev/private/v1/agents/{agent_id}/admins/"
@@ -4276,4 +4276,4 @@ actions:
         description: "智能体 ID"
         required: true
     examples:
-      - "bk-cli aidev append_private_v1_agent_admins --agent_id 1 --body '{\"space_id\":\"demo-space\",\"agent_id\":1}'"
+      - "bk-cli aidev append_private_agent_admins --agent_id 1 --body '{\"space_id\":\"demo-space\",\"agent_id\":1}'"

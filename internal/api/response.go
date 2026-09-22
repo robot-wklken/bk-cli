@@ -53,7 +53,7 @@ func BuildDryRunEnvelope(req *Request) *output.Envelope {
 	headers["User-Agent"] = userAgent
 	if req.BodyJSON != "" {
 		headers["Content-Type"] = "application/json"
-	} else if req.Body != nil && req.ContentType != "" {
+	} else if req.BodyReader != nil && req.ContentType != "" {
 		headers["Content-Type"] = req.ContentType
 	}
 	if req.AuthHeader != "" {

@@ -170,9 +170,9 @@ type Request struct {
 	URL         string
 	ParamsJSON  string            // JSON string for query params
 	BodyJSON    string            // JSON string for request body
-	Body        io.Reader         // Non-JSON request body, such as multipart form data
-	ContentType string            // Content-Type for non-JSON request bodies
-	DryRunBody  any               // Safe body metadata shown for non-JSON dry-run requests
+	BodyReader  io.Reader         // Raw non-JSON request body; mutually exclusive with BodyJSON.
+	ContentType string            // Content-Type for BodyReader; ignored when BodyJSON is set.
+	DryRunBody  any               // Safe dry-run representation for BodyReader; never sent on the wire.
 	Headers     map[string]string // Additional headers
 	AuthHeader  string            // X-Bkapi-Authorization value
 	TenantID    string            // X-Bk-Tenant-Id value
@@ -181,7 +181,7 @@ type Request struct {
 // Build creates an http.Request from the API request spec.
 func (r *Request) Build() (*http.Request, error) {
 	var body io.Reader
-	if r.BodyJSON != "" && r.Body != nil {
+	if r.BodyJSON != "" && r.BodyReader != nil {
 		return nil, fmt.Errorf("only one request body source can be provided")
 	}
 	if r.BodyJSON != "" {
@@ -189,8 +189,8 @@ func (r *Request) Build() (*http.Request, error) {
 			return nil, fmt.Errorf("invalid --body JSON: not valid JSON")
 		}
 		body = strings.NewReader(r.BodyJSON)
-	} else if r.Body != nil {
-		body = r.Body
+	} else if r.BodyReader != nil {
+		body = r.BodyReader
 	}
 
 	parsedURL, err := parseAndValidateRequestURL(r.URL)
@@ -209,7 +209,7 @@ func (r *Request) Build() (*http.Request, error) {
 	// default; non-JSON body callers provide their exact Content-Type.
 	if r.BodyJSON != "" {
 		req.Header.Set("Content-Type", "application/json")
-	} else if r.Body != nil && r.ContentType != "" {
+	} else if r.BodyReader != nil && r.ContentType != "" {
 		req.Header.Set("Content-Type", r.ContentType)
 	}
 
